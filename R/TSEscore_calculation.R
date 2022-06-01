@@ -9,10 +9,11 @@ rm(list=ls())
 dev.off()
 setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 
+# Load packages
+pacman::p_load('plyr', 'dplyr', 'tidyr', 'ggplot2')
+
 # Load normalized RNA counts (DESeq2) with the vst method
 load("data/normalizedCountMatrix.RData")
-
-
 
 
 #---------------------------------------------------------------------------------------------------
@@ -20,18 +21,10 @@ load("data/normalizedCountMatrix.RData")
 #---------------------------------------------------------------------------------------------------
 
 # Load list signatures and their genes
-gene_signatures <- readxl::read_xlsx("GeneSignaturesList.xlsx", sheet = 1)
+gene_signatures <- readxl::read_xlsx("GeneSignaturesTSEscore.xlsx", sheet = 1)
 
-# Indicate signatures for global T-cell and stromal signatures (see paper for details)  
-selectedSignaturesForGlobalSig <- c("CAF", "EMT/stroma core genes", "Fibroblasts", "Stromal signature", "TBRS", 
-                                 "IFN gamma", "tGE8", "T cell signature", "Immune gene signature", "T cell inflamed GEP", "Chemoattractants", "Cytotoxic CD8 T cell")
-
-
-# Keep only the selected signatures and genes that are in the RNA-seq data set
-gene_signatures <- gene_signatures %>%
-  dplyr::filter(signatureID %in% selectedSignaturesForGlobalSig) %>%
-  dplyr::filter(Gene %in% rownames(normalizedCountMatrix))
-
+# Keep only the selected genes that are in the RNA-seq data set
+gene_signatures <- gene_signatures %>% dplyr::filter(Gene %in% rownames(normalizedCountMatrix))
 
 # Get expression of all genes
 signatureScores <- normalizedCountMatrix[rownames(normalizedCountMatrix) %in% unique(gene_signatures$Gene), ]
@@ -78,7 +71,6 @@ TSEscore_results <- signatureScores_globalSigScore_Tcells %>%
   dplyr::mutate(TSE_score_category = ifelse(TSE_score > cutOff_TSEscore, 'Positive',
                                               ifelse(TSE_score < -cutOff_TSEscore, 'Negative', 'Neutral')))
   
-
 
 
 
@@ -137,5 +129,9 @@ results_RNAmUCsubtype <- normMatrixRNA_mUC_subtype %>% dplyr::arrange(-subtypeSc
 
 
 
-
-
+#---------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------
+# ---------------------------- Author:  J. Alberto Nakauma Gonzalez --------------------------------------
+# ---------------------------- e-mail: j.nakaumagonzalez@erasmusmc.nl ------------------------------------
+#---------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------
