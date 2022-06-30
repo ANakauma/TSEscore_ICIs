@@ -12,7 +12,7 @@ setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 # Load packages
 pacman::p_load('plyr', 'dplyr', 'tidyr', 'ggplot2')
 
-# Load normalized RNA counts (DESeq2) with the vst method
+# Load normalized RNA counts (DESeq2) with the vst method (example in data folder)
 load("data/normalizedCountMatrix.RData")
 
 
@@ -21,7 +21,7 @@ load("data/normalizedCountMatrix.RData")
 #---------------------------------------------------------------------------------------------------
 
 # Load list signatures and their genes
-gene_signatures <- readxl::read_xlsx("GeneSignaturesTSEscore.xlsx", sheet = 1)
+gene_signatures <- readxl::read_xlsx("data/GeneSignaturesTSEscore.xlsx", sheet = 1)
 
 # Keep only the selected genes that are in the RNA-seq data set
 gene_signatures <- gene_signatures %>% dplyr::filter(Gene %in% rownames(normalizedCountMatrix))
