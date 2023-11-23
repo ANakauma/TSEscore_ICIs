@@ -10,15 +10,33 @@ dev.off()
 setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 
 # Load packages
-pacman::p_load('plyr', 'dplyr', 'tidyr', 'ggplot2')
-
-# Load normalized RNA counts (DESeq2) with the vst method (example in data folder)
-load("data/normalizedCountMatrix.RData")
+pacman::p_load('plyr', 'dplyr', 'tidyr', 'ggplot2' , 'multiclassPairs')
 
 
+
+
+
+
+#---------------------------------------------------------------------------------------------------
+#---------------Apply classifier to identify the TSE score category of a sample---------------------
+#---------------------------------------------------------------------------------------------------
+# Load the TSE classifier (available in the data folder)
+source("classifier/TSE_classify.R")
+load("data/centroids_TSE.RData")
+
+# apply function using an rna count Matrix (rows = gene symbols, columns sampleId)
+TSEclass <- TSE_classify(x = matrixCounts, centroids_TSE = centroids_TSE)
+
+
+
+
+# if you are interested in knowing exactly the value of the TSE score, you should run the following code on your data
 #---------------------------------------------------------------------------------------------------
 #----------------------------------Calculate TSE score----------------------------------------------
 #---------------------------------------------------------------------------------------------------
+
+# Load normalized RNA counts (DESeq2) with the vst method (example in data folder)
+load("data/normalizedCountMatrix.RData")
 
 # Load list signatures and their genes
 gene_signatures <- readxl::read_xlsx("data/GeneSignaturesTSEscore.xlsx", sheet = 1)
@@ -63,14 +81,20 @@ signatureScores_globalSigScore_stroma <-  signatureScores %>% dplyr::filter(Main
   dplyr::distinct(variable, globalSigScore_stroma)
 
 
-# Calculate TSE score and define categories
-cutOff_TSEscore <- 0.5
+# Calculate TSE score and define categories 
+cutOff_TSEscore <- 0.5 #this may vary depending on the composition of your cohort due to median centered values
 TSEscore_results <- signatureScores_globalSigScore_Tcells %>%
   dplyr::full_join(signatureScores_globalSigScore_stroma, by = "variable") %>%
   dplyr::mutate(TSE_score = globalSigScore_Tcells - globalSigScore_stroma) %>%
   dplyr::mutate(TSE_score_category = ifelse(TSE_score > cutOff_TSEscore, 'Positive',
                                               ifelse(TSE_score < -cutOff_TSEscore, 'Negative', 'Neutral')))
   
+
+
+
+
+
+
 
 
 
