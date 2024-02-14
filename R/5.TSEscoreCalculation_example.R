@@ -1,5 +1,5 @@
 # Author:  J. Alberto Nakauma Gonzalez
-# Date:   09-05-2022
+# Date:   14-02-2024
 # Function: This script calculates the TSE score for the DR-176 cohort. It can be adjusted for other cohorts
 # e-mail: j.nakaumagonzalez@erasmusmc.nl
 # 
@@ -30,7 +30,8 @@ TSEclass <- TSE_classify(x = matrixCounts, centroids_TSE = centroids_TSE)
 
 
 
-# if you are interested in knowing exactly the value of the TSE score, you should run the following code on your data
+# if you are interested in knowing exactly the value of the TSE score, or your data has been processed differently,
+# you should run the following code on your data
 #---------------------------------------------------------------------------------------------------
 #----------------------------------Calculate TSE score----------------------------------------------
 #---------------------------------------------------------------------------------------------------

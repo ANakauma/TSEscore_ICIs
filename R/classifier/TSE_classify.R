@@ -5,7 +5,7 @@ TSE_classify <- function (x, minCor = 0.2, centroids_TSE)
   genesToKeep <- intersect(rownames(centroids_TSE), rownames(x))
   if (length(genesToKeep) == 0) {
     stop("Genes provided are not in the list of genes used for classification.\n Make sure that gene names are symbols") }
-  if (length(gkeep) < 0.6 * nrow(centroids_TSE))  {
+  if (length(genesToKeep) < 0.6 * nrow(centroids_TSE))  {
     warning("Less than 60% of the genes used for classification are present in the data provided. Results may not be relevant") }
   cor.dat <- as.data.frame(cor(x[genesToKeep, ], centroids_TSE[match(genesToKeep, rownames(centroids_TSE)), TSEclasses], use = "complete.obs"), row.names = colnames(x))
   cor.dat$nearestCentroid <- apply(cor.dat, 1, function(y) {
